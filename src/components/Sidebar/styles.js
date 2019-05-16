@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 export const Container = styled.aside`
   height: 100%;
+  overflow: auto;
+
   width: 200px;
   background: #121212;
   color: #b3b3b3;
@@ -11,7 +13,7 @@ export const Container = styled.aside`
   justify-content: space-between;
 
   > div {
-    padding: 25px;
+    padding: 20px;
   }
 `;
 

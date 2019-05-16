@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import 'rc-slider/assets/index.css';
 
 const GlobalStyle = createGlobalStyle`
   *{
@@ -9,7 +10,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   html, body, #root {
-    height: 100%;
+   height: 100%;
   }
 
   body{
