@@ -1,0 +1,51 @@
+import styled from 'styled-components';
+
+export const Container = styled.div`
+  flex: 1;
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+`;
+
+export const Title = styled.h1`
+  font-size: 48px;
+`;
+
+export const List = styled.div`
+  margin-top: 20px;
+  display: flex;
+`;
+
+export const Playlist = styled.a`
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  width: 200px;
+  text-decoration: none;
+
+  img {
+    height: 200px;
+  }
+
+  &:hover img {
+    opacity: 0.4;
+  }
+
+  strong {
+    font-size: 13px;
+    margin-top: 10px;
+    color: #fff;
+  }
+
+  p {
+    line-height: 22px;
+    margin-top: 5px;
+    font-size: 13px;
+    color: #b3b3b3;
+  }
+
+  &:first-child {
+    margin: 0;
+  }
+`;
