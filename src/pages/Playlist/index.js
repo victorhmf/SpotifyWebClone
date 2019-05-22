@@ -1,113 +1,131 @@
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Creators as PlayListDetailsActions } from '../../store/ducks/playlistDetails';
 
 import { Container, Header, SongList } from './styles';
+
+import Loading from '../../components/Loading';
 
 import ClockIcon from '../../assets/images/clock.svg';
 import PlusIcon from '../../assets/images/plus.svg';
 
-const Playlist = () => (
-  <Container>
-    <Header>
-      <img
-        src="https://99designs-blog.imgix.net/blog/wp-content/uploads/2017/12/Stargroves-album-cover.png?auto=format&q=60&fit=max&w=930"
-        alt="PLaylist"
-      />
+class Playlist extends Component {
+  static propTypes = {
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        id: PropTypes.number,
+      }),
+    }).isRequired,
+    getPlayListDetailsRequest: PropTypes.func.isRequired,
+    playlistDetails: PropTypes.shape({
+      data: PropTypes.shape({
+        thumbnail: PropTypes.string,
+        title: PropTypes.string,
+        description: PropTypes.string,
+        songs: PropTypes.arrayOf(
+          PropTypes.shape({
+            id: PropTypes.number,
+            tittle: PropTypes.string,
+            authoe: PropTypes.string,
+            album: PropTypes.string,
+          }),
+        ),
+      }),
+    }).isRequired,
+  };
 
-      <div>
-        <span>PLAYLIST</span>
-        <h1>Rock Forever</h1>
-        <p>13 músicas</p>
+  componentDidMount() {
+    this.loadPlayListDetails();
+  }
 
-        <button type="button">PLAY</button>
-      </div>
-    </Header>
-    <SongList cellPadding={0} cellSpacing={0}>
-      <thead>
-        <th />
-        <th>Título</th>
-        <th>Artista</th>
-        <th>Album</th>
-        <th>
-          <img src={ClockIcon} alt="Duração" />
-        </th>
-      </thead>
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.loadPlayListDetails();
+    }
+  }
 
-      <tbody>
-        <tr>
-          <td>
-            <img src={PlusIcon} alt="Adicionar" />
-          </td>
-          <td>Papercut</td>
-          <td>Linkin Park</td>
-          <td>Hybrid Theory</td>
-          <td>3:26</td>
-        </tr>
-        <tr>
-          <td>
-            <img src={PlusIcon} alt="Adicionar" />
-          </td>
-          <td>Papercut</td>
-          <td>Linkin Park</td>
-          <td>Hybrid Theory</td>
-          <td>3:26</td>
-        </tr>
-        <tr>
-          <td>
-            <img src={PlusIcon} alt="Adicionar" />
-          </td>
-          <td>Papercut</td>
-          <td>Linkin Park</td>
-          <td>Hybrid Theory</td>
-          <td>3:26</td>
-        </tr>
-        <tr>
-          <td>
-            <img src={PlusIcon} alt="Adicionar" />
-          </td>
-          <td>Papercut</td>
-          <td>Linkin Park</td>
-          <td>Hybrid Theory</td>
-          <td>3:26</td>
-        </tr>
-        <tr>
-          <td>
-            <img src={PlusIcon} alt="Adicionar" />
-          </td>
-          <td>Papercut</td>
-          <td>Linkin Park</td>
-          <td>Hybrid Theory</td>
-          <td>3:26</td>
-        </tr>
-        <tr>
-          <td>
-            <img src={PlusIcon} alt="Adicionar" />
-          </td>
-          <td>Papercut</td>
-          <td>Linkin Park</td>
-          <td>Hybrid Theory</td>
-          <td>3:26</td>
-        </tr>
-        <tr>
-          <td>
-            <img src={PlusIcon} alt="Adicionar" />
-          </td>
-          <td>Papercut</td>
-          <td>Linkin Park</td>
-          <td>Hybrid Theory</td>
-          <td>3:26</td>
-        </tr>
-        <tr>
-          <td>
-            <img src={PlusIcon} alt="Adicionar" />
-          </td>
-          <td>Papercut</td>
-          <td>Linkin Park</td>
-          <td>Hybrid Theory</td>
-          <td>3:26</td>
-        </tr>
-      </tbody>
-    </SongList>
-  </Container>
-);
+  loadPlayListDetails() {
+    const { getPlayListDetailsRequest } = this.props;
+    const { id } = this.props.match.params;
 
-export default Playlist;
+    getPlayListDetailsRequest(id);
+  }
+
+  renderDetails() {
+    const { playlistDetails } = this.props;
+    return (
+      <Container>
+        <Header>
+          <img src={playlistDetails.data.thumbnail} alt={playlistDetails.data.title} />
+
+          <div>
+            <span>PLAYLIST</span>
+            <h1>{playlistDetails.data.title}</h1>
+            {!!playlistDetails.data.songs && (
+              <p>{`${playlistDetails.data.songs.length} músicas`}</p>
+            )}
+
+            <button type="button">PLAY</button>
+          </div>
+        </Header>
+        <SongList cellPadding={0} cellSpacing={0}>
+          <thead>
+            <th />
+            <th>Título</th>
+            <th>Artista</th>
+            <th>Album</th>
+            <th>
+              <img src={ClockIcon} alt="Duração" />
+            </th>
+          </thead>
+
+          <tbody>
+            {!playlistDetails.data.songs ? (
+              <tr>
+                <td colSpan={5}>Nenhum música cadastrada</td>
+              </tr>
+            ) : (
+              playlistDetails.data.songs.map(song => (
+                <tr key={song.id}>
+                  <td>
+                    <img src={PlusIcon} alt="Adicionar" />
+                  </td>
+                  <td>{song.title}</td>
+                  <td>{song.author}</td>
+                  <td>{song.album}</td>
+                  <td>3:26</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </SongList>
+      </Container>
+    );
+  }
+
+  render() {
+    const { playlistDetails } = this.props;
+
+    return playlistDetails.loading ? (
+      <Container loading>
+        <Loading />
+      </Container>
+    ) : (
+      this.renderDetails()
+    );
+  }
+}
+
+const mapStateToProps = state => ({
+  playlistDetails: state.playlistDetails,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators(PlayListDetailsActions, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Playlist);
