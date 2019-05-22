@@ -2,6 +2,7 @@ import { call, put } from 'redux-saga/effects';
 import api from '../../services/api';
 
 import { Creators as PlayListDetailsActions } from '../ducks/playlistDetails';
+import { Creators as ErrorActions } from '../ducks/error';
 
 export function* getPlayListDetails(action) {
   try {
@@ -9,6 +10,6 @@ export function* getPlayListDetails(action) {
 
     yield put(PlayListDetailsActions.getPlayListDetailsSuccess(response.data));
   } catch (err) {
-    console.log(err);
+    yield put(ErrorActions.setError('Não foi possível obter os detalhes da playlist'));
   }
 }
